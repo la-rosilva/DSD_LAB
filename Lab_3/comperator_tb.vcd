@@ -1,0 +1,66 @@
+$date
+	Sat Aug 31 10:46:04 2024
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module comperator_tb $end
+$var wire 1 ! l $end
+$var wire 1 " g $end
+$var wire 1 # e $end
+$var reg 3 $ a [2:0] $end
+$var reg 3 % b [2:0] $end
+$scope module comp $end
+$var wire 3 & a [2:0] $end
+$var wire 3 ' b [2:0] $end
+$var reg 1 # e $end
+$var reg 1 " g $end
+$var reg 1 ! l $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+b0 '
+b101 &
+b0 %
+b101 $
+0#
+1"
+0!
+$end
+#20
+0"
+1#
+b0 $
+b0 &
+#40
+1!
+0#
+b111 %
+b111 '
+b110 $
+b110 &
+#60
+0!
+1"
+b1 %
+b1 '
+b111 $
+b111 &
+#80
+b10 %
+b10 '
+b100 $
+b100 &
+#100
+0"
+1!
+b100 %
+b100 '
+b11 $
+b11 &
+#120
