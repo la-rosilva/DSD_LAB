@@ -1,0 +1,36 @@
+1. select count(distinct(ID)) from takes group by course_id;
+2.select count(ID) from student group by dept_name having count(ID)>10;
+3. select count(course_id) count from course group by dept_name;
+4.select dept_name, avg(salary) from instructor group by dept_name having avg(salary)>42000;
+5.select sec_id,count(ID) from takes where semester='Spring' and year=2009 group by sec_id;
+6.select course_id,prereq_id from prereq order by course_id;
+7.select * from instructor order by salary desc
+8.select max(sum(salary)) from instructor group by dept_name; OR select max(dept_sum) max_sal from(select dept_name,sum(salary) dept_sum from instructor group by
+dept_name); OR (display along with dept_name)
+SELECT dept_name, dept_sum AS max_sal
+  2  FROM (
+  3      SELECT dept_name, SUM(salary) AS dept_sum
+  4      FROM instructor
+  5      GROUP BY dept_name
+  6  )
+  7  WHERE dept_sum = (SELECT MAX(dept_sum)
+  8                    FROM (
+  9                        SELECT SUM(salary) AS dept_sum
+ 10                        FROM instructor
+ 11                        GROUP BY dept_name
+ 12                    ));
+
+9. with avgsal as(select avg(salary) sal,dept_name from instructor group by dept_name) select dept_name, sal from avgsal where sal>42000; OR select avg(salary) from instructor group by dept_name having avg(salary)>42000;
+
+10. with count as(select sec_id,count(distinct ID) tot_count from takes where semester='Spring' and year=2010 group by sec_id) select sec_id, tot_count from count where tot_count=(select max(tot_count) from count
+);
+
+11.select T.name from instructor T where not exists (select ID from student where dept_name='Comp. S
+ci.' MINUS select A.ID from takes A,teaches S where T.ID=S.ID and A.year=S.year and A.semester=S.semes
+ter and A.course_id=S.course_id);
+
+12. select avg(salary),dept_name from instructor group by dept_name having avg(salary)>50000 and coun
+t(*)>5;
+
+
+
