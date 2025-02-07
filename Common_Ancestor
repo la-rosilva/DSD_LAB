@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definition of a binary tree node
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+// Function to build the tree from user input
+struct Node* buildTree() {
+    int data;
+    printf("Enter node value (-1 for no node): ");
+    scanf("%d", &data);
+
+    if (data == -1)
+        return NULL;
+
+    struct Node* root = newNode(data);
+
+    printf("Enter left child of %d:\n", data);
+    root->left = buildTree();
+
+    printf("Enter right child of %d:\n", data);
+    root->right = buildTree();
+
+    return root;
+}
+
+// Function to find the LCA of two given nodes
+struct Node* findLCA(struct Node* root, int n1, int n2) {
+    if (root == NULL)
+        return NULL;
+
+    // If root is equal to either n1 or n2, return root
+    if (root->data == n1 || root->data == n2)
+        return root;
+
+    // Search in left and right subtrees
+    struct Node* leftLCA = findLCA(root->left, n1, n2);
+    struct Node* rightLCA = findLCA(root->right, n1, n2);
+
+    // If both calls return non-null, root is LCA
+    if (leftLCA && rightLCA)
+        return root;
+
+    // Otherwise, return the non-null value (if any)
+    return (leftLCA != NULL) ? leftLCA : rightLCA;
+}
+
+// Function to print the tree in Inorder traversal
+void inorderTraversal(struct Node* root) {
+    if (root == NULL)
+        return;
+    inorderTraversal(root->left);
+    printf("%d ", root->data);
+    inorderTraversal(root->right);
+}
+
+// Driver program
+int main() {
+    printf("Build the binary tree:\n");
+    struct Node* root = buildTree();
+
+    printf("\nInorder traversal of the tree:\n");
+    inorderTraversal(root);
+    printf("\n");
+
+    // Take input for LCA
+    int n1, n2;
+    printf("Enter two node values to find their LCA: ");
+    scanf("%d %d", &n1, &n2);
+
+    struct Node* lca = findLCA(root, n1, n2);
+    if (lca != NULL)
+        printf("LCA of %d and %d is %d\n", n1, n2, lca->data);
+    else
+        printf("LCA not found in the tree.\n");
+
+    return 0;
+}
