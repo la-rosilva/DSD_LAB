@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count = 0;
+int popcount = 0;
+int hasCycle = 0; // Flag to detect cycles
+
+void dfs(int v, int **adjmatrix, int n, int *visited, int *pushorder, int *poporder, int parent) {
+    count++;
+    visited[v] = count;
+    pushorder[v] = count;
+
+    for (int w = 0; w < n; w++) {
+        if (adjmatrix[v][w] == 1) {
+            if (visited[w] == 0) {
+                dfs(w, adjmatrix, n, visited, pushorder, poporder, v);
+            } 
+            // Cycle detection: If `w` is visited and isn't the parent of `v`
+            else if (w != parent && poporder[w] == 0) {
+                hasCycle = 1;
+            }
+        }
+    }
+    popcount++;
+    poporder[v] = popcount;
+}
+
+void DFS(int *visited, int *pushorder, int *poporder, int v, int **adjmatrix) {
+    for (int i = 0; i < v; i++) {
+        visited[i] = 0;
+        pushorder[i] = 0;
+        poporder[i] = 0;
+    }
+    hasCycle = 0; // Reset cycle detection flag
+
+    for (int i = 0; i < v; i++) {
+        if (visited[i] == 0) {
+            dfs(i, adjmatrix, v, visited, pushorder, poporder, -1);
+        }
+    }
+
+    if (hasCycle) {
+        printf("Topological sort cannot be done (Cycle detected)\n");
+        return;
+    }
+
+    printf("Vertex numbering order:\n");
+    for (int i = 0; i < v; i++) {
+        printf("Vertex %d -> %d\n", i, visited[i]);
+    }
+
+    printf("\nPush order:\n");
+    for (int i = 0; i < v; i++) {
+        printf("Vertex %d -> %d\n", i, pushorder[i]);
+    }
+
+    printf("\nPop order:\n");
+    for (int i = 0; i < v; i++) {
+        printf("Vertex %d -> %d\n", i, poporder[i]);
+    }
+
+    printf("\nTopological sort of the given graph:\n");
+    for (int i = v - 1; i >= 0; i--) {
+        for (int j = 0; j < v; j++) {
+            if (poporder[j] == i + 1) {
+                printf("%d ", j);
+            }
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int v, e, m, n;
+    printf("Enter the number of vertices and edges: ");
+    scanf("%d%d", &v, &e);
+
+    int **adjmatrix = malloc(v * sizeof(int *));
+    for (int i = 0; i < v; i++) {
+        adjmatrix[i] = (int *)malloc(v * sizeof(int));
+    }
+
+    for (int i = 0; i < v; i++) {
+        for (int j = 0; j < v; j++) {
+            adjmatrix[i][j] = 0;
+        }
+    }
+
+    printf("Enter the edges:\n");
+    for (int i = 0; i < e; i++) {
+        scanf("%d%d", &m, &n);
+        adjmatrix[m][n] = 1;
+        adjmatrix[n][m] = 1; // Since it's an undirected graph
+    }
+
+    int *visited = malloc(v * sizeof(int));
+    int *pushorder = malloc(v * sizeof(int));
+    int *poporder = malloc(v * sizeof(int));
+
+    printf("\nAdjacency Matrix:\n");
+    for (int i = 0; i < v; i++) {
+        for (int j = 0; j < v; j++) {
+            printf("%d ", adjmatrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    DFS(visited, pushorder, poporder, v, adjmatrix);
+
+    for (int i = 0; i < v; i++) {
+        free(adjmatrix[i]);
+    }
+    free(adjmatrix);
+    free(visited);
+    free(pushorder);
+    free(poporder);
+
+    return 0;
+}
