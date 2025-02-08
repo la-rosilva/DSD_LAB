@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void topologicalSort(int **adjMatrix, int v) {
+    int *inDegree = (int *)malloc(v * sizeof(int));
+    int *topoOrder = (int *)malloc(v * sizeof(int));
+    int front = 0, rear = 0;
+    
+    // Step 1: Compute in-degrees
+    for (int i = 0; i < v; i++) {
+        inDegree[i] = 0;
+        for (int j = 0; j < v; j++) {
+            if (adjMatrix[j][i] == 1) { // Count incoming edges
+                inDegree[i]++;
+            }
+        }
+    }
+
+    // Step 2: Enqueue all vertices with in-degree 0
+    int *queue = (int *)malloc(v * sizeof(int));
+    for (int i = 0; i < v; i++) {
+        if (inDegree[i] == 0) {
+            queue[rear++] = i;
+        }
+    }
+
+    // Step 3: Process the queue
+    int count = 0; // Number of vertices processed
+    while (front < rear) {
+        int node = queue[front++];
+        topoOrder[count++] = node;
+
+        // Reduce in-degree for all its adjacent vertices
+        for (int i = 0; i < v; i++) {
+            if (adjMatrix[node][i] == 1) { // Edge exists
+                inDegree[i]--;
+                if (inDegree[i] == 0) {
+                    queue[rear++] = i;
+                }
+            }
+        }
+    }
+
+    // Step 4: Check for cycles
+    if (count != v) {
+        printf("Topological sort cannot be done (Cycle detected)\n");
+    } else {
+        printf("Topological sort of the given graph:\n");
+        for (int i = 0; i < v; i++) {
+            printf("%d ", topoOrder[i]);
+        }
+        printf("\n");
+    }
+
+    free(inDegree);
+    free(topoOrder);
+    free(queue);
+}
+
+int main() {
+    int v, e, m, n;
+    printf("Enter the number of vertices and edges: ");
+    scanf("%d%d", &v, &e);
+
+    int **adjMatrix = malloc(v * sizeof(int *));
+    for (int i = 0; i < v; i++) {
+        adjMatrix[i] = (int *)malloc(v * sizeof(int));
+        for (int j = 0; j < v; j++) {
+            adjMatrix[i][j] = 0; // Initialize with no edges
+        }
+    }
+
+    printf("Enter the edges (from -> to):\n");
+    for (int i = 0; i < e; i++) {
+        scanf("%d%d", &m, &n);
+        adjMatrix[m][n] = 1; // Directed edge from m to n
+    }
+
+    topologicalSort(adjMatrix, v);
+
+    for (int i = 0; i < v; i++) {
+        free(adjMatrix[i]);
+    }
+    free(adjMatrix);
+
+    return 0;
+}
