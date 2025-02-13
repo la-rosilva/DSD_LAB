@@ -1,0 +1,41 @@
+AREA RESET, CODE, READONLY
+    EXPORT __Vectors
+__Vectors
+    DCD 0x10001000
+    DCD Reset_Handler
+    ALIGN
+
+    AREA mycode, CODE, READONLY
+    ENTRY
+    EXPORT Reset_Handler
+
+
+Reset_Handler
+    LDR R0, =n       ; Load the address of n
+    LDR R0, [R0]     ; Load value of n into R0
+    BL factorial     ; Call factorial function
+    LDR R1, =result  ; Load address to store result
+    STR R0, [R1]     ; Store computed factorial in result
+STOP
+    B STOP           ; Infinite loop to halt
+
+; Recursive function: factorial(n)
+factorial
+    CMP R0, #0       ; Check if n == 0
+    MOVEQ R0, #1     ; If yes, return 1 (base case)
+    BEQ return       ; Branch to return if base case
+
+    PUSH {LR, R0}    ; Save return address and original n
+    SUB R0, R0, #1   ; n - 1
+    BL factorial     ; Recursive call: factorial(n-1)
+    POP {R1, LR}     ; Restore original n and return address
+    MUL R0, R1, R0   ; n * factorial(n-1)
+
+return
+    MOV PC, LR       ; Correct way to return from function
+n       DCD 5         ; Input number (change for different factorials)
+
+    AREA mydata, DATA, READWRITE
+result  DCD 0         ; Store computed factorial
+
+    END
