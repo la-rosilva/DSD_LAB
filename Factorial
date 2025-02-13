@@ -36,6 +36,60 @@ return
 n       DCD 5         ; Input number (change for different factorials)
 
     AREA mydata, DATA, READWRITE
+
 result  DCD 0         ; Store computed factorial
 
     END
+
+
+
+
+	AREA RESET,DATA,READONLY
+	EXPORT __Vectors
+__Vectors
+	DCD 0X40001000
+	DCD Reset_Handler
+	ALIGN
+	AREA mycode,CODE,READONLY
+	ENTRY
+	EXPORT Reset_Handler
+Reset_Handler
+	 LDR R0,=LIST     ; Load the base address of the list
+     LDR R1,=RESULT   ; Load the base address of the result
+     MOV R2,#10       ; Number of elements in the array
+     MOV R4,#0	 ; Index for copying array
+UP 	LDR R3,[R0,R4]
+	STR R3,[R1,R4]
+	ADD R4,R4,#4
+	SUBS R2,R2,#1
+	BNE UP
+	LDR R0,=RESULT
+	MOV R10,#10 ;OUTER LOOP COUNTER
+OUT SUBS R10,R10,#1
+	BEQ END_SORT
+	MOV R4,R0 ;R4 TO THE START OF UNSORTED PART
+	MOV R5,R0 ;R5 HAS THE INDEX OF THE MIN ELEMENT
+	MOV R6,R10 ;INNER LOOP COUNTER
+	ADD R6,R6,#1 ;1-BASED INDEX
+IN  LDR R7,[R4,#4]! ;LOAD NEXT ELE AND INC R4
+	LDR R8,[R5] ;CUR MIN
+	CMP R7,R8
+	MOVLT R5,R4 ;IF NEW ELE IS SMALL, UPDATE MIN INDEX
+	SUBS R6,R6,#1
+	BNE IN
+	LDR R7,[R5]
+	LDR R8,[R0]
+	STR R7,[R0]
+	STR R8,[R5]
+	ADD R0,R0,#4
+	B OUT
+END_SORT
+	B END_SORT
+STOP B STOP
+LIST DCD  0x10, 0x05, 0x33, 0x24, 0x56, 0x77, 0x21, 0x04, 0x87, 0x01
+	AREA data1, DATA, READWRITE
+RESULT DCW  0,0,0,0,0,0,0,0,0,0
+	END
+
+	
+	
