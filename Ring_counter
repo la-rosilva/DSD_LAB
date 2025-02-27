@@ -1,0 +1,28 @@
+#include <LPC17xx.h>
+
+int main(void) {
+    unsigned int i, j;
+    unsigned long ringCounter = 1; 
+
+    LPC_PINCON->PINSEL0 &= 0xFF0000FF; 
+    LPC_GPIO0->FIODIR |= 0x00000FF0;  
+    LPC_PINCON->PINSEL4 &= 0xFCFFFFFF; 
+    LPC_GPIO2->FIODIR &= 0xFFFFEFFF;  
+
+    while (1) {
+        
+        if (LPC_GPIO2->FIOPIN & (1 << 12)) {
+           
+            ringCounter = (ringCounter << 1) | (ringCounter >> 7);  
+        } else {
+
+            ringCounter = (ringCounter >> 1) | (ringCounter << 7); 
+        }
+
+        LPC_GPIO0->FIOPIN = ringCounter << 4;  
+
+        
+        for (j = 0; j < 100000; j++);
+
+    }
+}
