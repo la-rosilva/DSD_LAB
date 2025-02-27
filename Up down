@@ -1,0 +1,22 @@
+8-bit binary up counter#include <LPC17xx.h>
+
+void delay() {
+    for (volatile int i = 0; i < 1000000; i++);  // Simple delay loop
+}
+
+int main(void) {
+    unsigned char count = 0;  // 8-bit counter
+
+    SystemInit();
+    SystemCoreClockUpdate();
+
+    // Configure P0.4 - P0.11 as output for LED display
+    LPC_PINCON->PINSEL0 &= 0xFF0000FF;
+    LPC_GPIO0->FIODIR |= 0x00000FF0; 
+
+    while (1) {
+        LPC_GPIO0->FIOPIN = (count << 4);  // Display count on P0.4 - P0.11
+        count++;  // Increment counter
+        delay();  // Wait to make counting visible
+    }
+}
