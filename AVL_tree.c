@@ -3,8 +3,7 @@
 
 struct Node {
     int key;
-    struct Node *left;
-    struct Node *right;
+    struct Node *left, *right;
     int height;
 };
 
@@ -24,9 +23,9 @@ struct Node* newNode(int key) {
     return node;
 }
 
-struct Node *rightRotate(struct Node *y) {
-    struct Node *x = y->left;
-    struct Node *T2 = x->right;
+struct Node* rightRotate(struct Node* y) {
+    struct Node* x = y->left;
+    struct Node* T2 = x->right;
     x->right = y;
     y->left = T2;
     y->height = max(height(y->left), height(y->right)) + 1;
@@ -34,9 +33,9 @@ struct Node *rightRotate(struct Node *y) {
     return x;
 }
 
-struct Node *leftRotate(struct Node *x) {
-    struct Node *y = x->right;
-    struct Node *T2 = y->left;
+struct Node* leftRotate(struct Node* x) {
+    struct Node* y = x->right;
+    struct Node* T2 = y->left;
     y->left = x;
     x->right = T2;
     x->height = max(height(x->left), height(x->right)) + 1;
@@ -44,40 +43,72 @@ struct Node *leftRotate(struct Node *x) {
     return y;
 }
 
-int getBalance(struct Node *N) {
+int getBalance(struct Node* N) {
     return (N == NULL) ? 0 : height(N->left) - height(N->right);
 }
 
-struct Node* insert(struct Node* node, int key) {
-    if (node == NULL)
-        return newNode(key);
+struct Node* insert(struct Node* root, int key) {
+    struct Node* new_node = newNode(key);
+    struct Node* parent = NULL;
+    struct Node* current = root;
     
-    if (key < node->key)
-        node->left = insert(node->left, key);
-    else if (key > node->key)
-        node->right = insert(node->right, key);
+    // Step 1: Normal BST insertion (iterative)
+    while (current != NULL) {
+        parent = current;
+        if (key < current->key)
+            current = current->left;
+        else if (key > current->key)
+            current = current->right;
+        else
+            return root;  // Duplicate keys not allowed
+    }
+
+    // Insert new node
+    if (parent == NULL) 
+        return new_node;  // Tree was empty
+    if (key < parent->key)
+        parent->left = new_node;
     else
-        return node;
+        parent->right = new_node;
+
+    // Step 2: Backtracking to update heights and rebalance
+    current = root;
+    struct Node* stack[100];  // Stack for backtracking
+    int top = -1;
     
-    node->height = 1 + max(height(node->left), height(node->right));
-    int balance = getBalance(node);
+    while (current != NULL) {
+        stack[++top] = current;
+        if (key < current->key)
+            current = current->left;
+        else
+            current = current->right;
+    }
+
+    while (top >= 0) {
+        struct Node* node = stack[top--];
+        node->height = max(height(node->left), height(node->right)) + 1;
+
+        int balance = getBalance(node);
+
+        // Perform rotations
+        if (balance > 1 && key < node->left->key)
+            return rightRotate(node);
+        if (balance < -1 && key > node->right->key)
+            return leftRotate(node);
+        if (balance > 1 && key > node->left->key) {
+            node->left = leftRotate(node->left);
+            return rightRotate(node);
+        }
+        if (balance < -1 && key < node->right->key) {
+            node->right = rightRotate(node->right);
+            return leftRotate(node);
+        }
+    }
     
-    if (balance > 1 && key < node->left->key)
-        return rightRotate(node);
-    if (balance < -1 && key > node->right->key)
-        return leftRotate(node);
-    if (balance > 1 && key > node->left->key) {
-        node->left = leftRotate(node->left);
-        return rightRotate(node);
-    }
-    if (balance < -1 && key < node->right->key) {
-        node->right = rightRotate(node->right);
-        return leftRotate(node);
-    }
-    return node;
+    return root;
 }
 
-void preOrder(struct Node *root) {
+void preOrder(struct Node* root) {
     if (root != NULL) {
         printf("%d ", root->key);
         preOrder(root->left);
@@ -86,7 +117,7 @@ void preOrder(struct Node *root) {
 }
 
 int main() {
-    struct Node *root = NULL;
+    struct Node* root = NULL;
     int key;
     char choice;
     
