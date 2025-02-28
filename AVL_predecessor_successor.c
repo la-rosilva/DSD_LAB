@@ -23,9 +23,9 @@ struct Node* newNode(int key) {
     return node;
 }
 
-struct Node *rightRotate(struct Node *y) {
-    struct Node *x = y->left;
-    struct Node *T2 = x->right;
+struct Node* rightRotate(struct Node* y) {
+    struct Node* x = y->left;
+    struct Node* T2 = x->right;
     x->right = y;
     y->left = T2;
     y->height = max(height(y->left), height(y->right)) + 1;
@@ -33,9 +33,9 @@ struct Node *rightRotate(struct Node *y) {
     return x;
 }
 
-struct Node *leftRotate(struct Node *x) {
-    struct Node *y = x->right;
-    struct Node *T2 = y->left;
+struct Node* leftRotate(struct Node* x) {
+    struct Node* y = x->right;
+    struct Node* T2 = y->left;
     y->left = x;
     x->right = T2;
     x->height = max(height(x->left), height(x->right)) + 1;
@@ -43,71 +43,49 @@ struct Node *leftRotate(struct Node *x) {
     return y;
 }
 
-int getBalance(struct Node *N) {
+int getBalance(struct Node* N) {
     return (N == NULL) ? 0 : height(N->left) - height(N->right);
 }
 
-struct Node* insert(struct Node* node, int key) {
-    if (node == NULL)
-        return newNode(key);
-    
-    if (key < node->key)
-        node->left = insert(node->left, key);
-    else if (key > node->key)
-        node->right = insert(node->right, key);
-    else
-        return node;
-    
-    node->height = 1 + max(height(node->left), height(node->right));
-    int balance = getBalance(node);
-    
-    if (balance > 1 && key < node->left->key)
-        return rightRotate(node);
-    if (balance < -1 && key > node->right->key)
-        return leftRotate(node);
-    if (balance > 1 && key > node->left->key) {
-        node->left = leftRotate(node->left);
-        return rightRotate(node);
-    }
-    if (balance < -1 && key < node->right->key) {
-        node->right = rightRotate(node->right);
-        return leftRotate(node);
-    }
-    return node;
-}
-
-// Function to find the predecessor and successor
-void findPreSuc(struct Node* root, struct Node** pre, struct Node** suc, int key) {
+struct Node* insert(struct Node* root, int key) {
     if (root == NULL)
-        return;
-    
-    if (root->key == key) {
-        if (root->left != NULL) {
-            struct Node* temp = root->left;
-            while (temp->right)
-                temp = temp->right;
-            *pre = temp;
-        }
+        return newNode(key);
 
-        if (root->right != NULL) {
-            struct Node* temp = root->right;
-            while (temp->left)
-                temp = temp->left;
-            *suc = temp;
-        }
-        return;
+    if (key < root->key)
+        root->left = insert(root->left, key);
+    else if (key > root->key)
+        root->right = insert(root->right, key);
+    else
+        return root; // Duplicates not allowed
+
+    root->height = 1 + max(height(root->left), height(root->right));
+
+    int balance = getBalance(root);
+
+    // Left Left Case
+    if (balance > 1 && key < root->left->key)
+        return rightRotate(root);
+
+    // Right Right Case
+    if (balance < -1 && key > root->right->key)
+        return leftRotate(root);
+
+    // Left Right Case
+    if (balance > 1 && key > root->left->key) {
+        root->left = leftRotate(root->left);
+        return rightRotate(root);
     }
 
-    if (root->key > key) {
-        *suc = root;
-        findPreSuc(root->left, pre, suc, key);
-    } else {
-        *pre = root;
-        findPreSuc(root->right, pre, suc, key);
+    // Right Left Case
+    if (balance < -1 && key < root->right->key) {
+        root->right = rightRotate(root->right);
+        return leftRotate(root);
     }
+
+    return root;
 }
 
-void preOrder(struct Node *root) {
+void preOrder(struct Node* root) {
     if (root != NULL) {
         printf("%d ", root->key);
         preOrder(root->left);
@@ -115,11 +93,51 @@ void preOrder(struct Node *root) {
     }
 }
 
+// Function to find the maximum value in a subtree (Predecessor helper)
+struct Node* findMax(struct Node* node) {
+    while (node->right != NULL)
+        node = node->right;
+    return node;
+}
+
+// Function to find the minimum value in a subtree (Successor helper)
+struct Node* findMin(struct Node* node) {
+    while (node->left != NULL)
+        node = node->left;
+    return node;
+}
+
+// Function to find predecessor and successor
+void findPredecessorSuccessor(struct Node* root, int key, struct Node** pred, struct Node** succ) {
+    if (root == NULL)
+        return;
+
+    if (root->key == key) {
+        // Predecessor: Max value in left subtree
+        if (root->left != NULL)
+            *pred = findMax(root->left);
+
+        // Successor: Min value in right subtree
+        if (root->right != NULL)
+            *succ = findMin(root->right);
+
+        return;
+    }
+
+    if (key < root->key) {
+        *succ = root;
+        findPredecessorSuccessor(root->left, key, pred, succ);
+    } else {
+        *pred = root;
+        findPredecessorSuccessor(root->right, key, pred, succ);
+    }
+}
+
 int main() {
-    struct Node *root = NULL;
+    struct Node* root = NULL;
     int key;
     char choice;
-    
+
     printf("Enter values to insert into AVL tree (Enter 'n' to stop):\n");
     while (1) {
         printf("Enter a number: ");
@@ -130,25 +148,27 @@ int main() {
         if (choice == 'n' || choice == 'N')
             break;
     }
-    
+
     printf("\nPreorder traversal of the AVL tree: \n");
     preOrder(root);
-    
-    printf("\n\nEnter key to find predecessor and successor: ");
+
+    // Finding Predecessor and Successor
+    struct Node* pred = NULL;
+    struct Node* succ = NULL;
+    printf("\n\nEnter a key to find its predecessor and successor: ");
     scanf("%d", &key);
 
-    struct Node *pre = NULL, *suc = NULL;
-    findPreSuc(root, &pre, &suc, key);
+    findPredecessorSuccessor(root, key, &pred, &succ);
 
-    if (pre != NULL)
-        printf("Predecessor: %d\n", pre->key);
+    if (pred)
+        printf("Predecessor of %d is %d\n", key, pred->key);
     else
-        printf("No Predecessor\n");
+        printf("No Predecessor found for %d\n", key);
 
-    if (suc != NULL)
-        printf("Successor: %d\n", suc->key);
+    if (succ)
+        printf("Successor of %d is %d\n", key, succ->key);
     else
-        printf("No Successor\n");
+        printf("No Successor found for %d\n", key);
 
     return 0;
 }
