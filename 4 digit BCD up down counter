@@ -1,63 +1,63 @@
 #include <LPC17xx.h>
 
 unsigned char tohex[10] = {0X3F, 0X06, 0X5B, 0X4F, 0X66, 0X6D, 0X7D, 0X07, 0X7F, 0X6F};
-int arr[4] = {0, 0, 0, 0};  // Initialize counter at 0000
+int arr[4] = {0, 0, 0, 0}; 
 
-#define SWITCH (1 << 10) // P2.10 as switch input
 
-// *Timer0 for 1-second delay*
+
+
 void initTimer()
 {
-    LPC_SC->PCONP |= (1 << 1); // Power up Timer0
-    LPC_TIM0->CTCR = 0x0;   // Timer Mode
-    LPC_TIM0->TCR  = 0x02;  // Reset Timer
-    LPC_TIM0->PR   = 2;     // 1µs resolution
-    LPC_TIM0->MR0  = 999999; // 1-second delay
-    LPC_TIM0->MCR  = 2;     // Reset TC on match
-    LPC_TIM0->EMR  = 0x20;  // Set bit on match
-    LPC_TIM0->TCR  = 0x01;  // Enable Timer0
+ 
+    LPC_TIM0->CTCR = 0x0;   
+    LPC_TIM0->TCR  = 0x02; 
+    LPC_TIM0->PR   = 2;     
+    LPC_TIM0->MR0  = 999999; 
+    LPC_TIM0->MCR  = 2;     
+    LPC_TIM0->EMR  = 0x20;  
+    LPC_TIM0->TCR  = 0x01;  
 }
 
-// *Delay Function using Timer0*
+
 void delay()
 {
     initTimer();
-    while (!(LPC_TIM0->EMR & 1)); // Wait for Timer Match
+    while (!(LPC_TIM0->EMR & 1)); 
 }
 
-// *Update 7-segment display*
+
 void updateDisplay()
 {
-    for (int i = 0; i < 4; i++)  // Multiplexing
+    for (int i = 0; i < 4; i++)  
     {
-        LPC_GPIO1->FIOPIN = i << 23;         // Select digit
-        LPC_GPIO0->FIOPIN = tohex[arr[i]] << 4; // Display digit
-        delay(); // Delay between switching digits
+        LPC_GPIO1->FIOPIN = i << 23;      
+        LPC_GPIO0->FIOPIN = tohex[arr[i]] << 4; 
+        delay(); 
     }
 }
 
-// *Main Logic*
+
 int main()
 {
-    // *Configure GPIO for 7-segment display (P0.4 to P0.11 as output)*
-    LPC_PINCON->PINSEL0 = LPC_PINCON->PINSEL0 & 0xFF0000FF; // Set P0.4 to P0.11 as GPIO
-    LPC_GPIO0->FIODIR |= 0XFF0;    // Configure as output for 7-segment
+   
+    LPC_PINCON->PINSEL0 = LPC_PINCON->PINSEL0 & 0xFF0000FF; 
+    LPC_GPIO0->FIODIR |= 0XFF0;   
 
-    // *Configure GPIO for digit select (P1.23 to P1.26 as output)*
-    LPC_PINCON->PINSEL3 = LPC_PINCON->PINSEL3 & 0xF00FFFFF; // Set P1.23 - P1.26 as GPIO
-    LPC_GPIO1->FIODIR |= 0xF << 23; // Configure as output for digit selection
+  
+    LPC_PINCON->PINSEL3 = LPC_PINCON->PINSEL3 & 0xF00FFFFF; 
+    LPC_GPIO1->FIODIR |= 0xF << 23; 
 
-    // *Configure GPIO for switch input (P2.10)*
-    LPC_PINCON->PINSEL4 = LPC_PINCON->PINSEL4 & 0xFFCFFFFF; // Set P2.10 as GPIO
-    LPC_GPIO2->FIODIR = LPC_GPIO2->FIODIR & ~(SWITCH); // Set P2.10 as input
+
+    LPC_PINCON->PINSEL4 = LPC_PINCON->PINSEL4 & 0xFFCFFFFF; 
+    LPC_GPIO2->FIODIR = LPC_GPIO2->FIODIR &=0xFFFFEFFF;
 
     while (1)
     {
-        // *Step 1: Read Switch State*
-        int switchState = LPC_GPIO2->FIOPIN & SWITCH;
 
-        // *Step 2: Modify Counter Value*
-        if (switchState) // If switch is ON → Increment
+        int switchState = LPC_GPIO2->FIOPIN & (1<<12);
+
+      
+        if (switchState) 
         {
             arr[0] = arr[0] + 1;
             if (arr[0] > 9)
@@ -80,7 +80,7 @@ int main()
                 }
             }
         }
-        else // If switch is OFF → Decrement
+        else 
         {
             if (arr[0] == 0)
             {
@@ -116,7 +116,7 @@ int main()
             }
         }
 
-        // *Step 3: Update Display*
+       
         updateDisplay();
     }
 }
