@@ -41,6 +41,23 @@ void insert(struct HashTable* hashTable, int key) {
     hashTable->table[index] = newNode;
 }
 
+// Function to search for a key in the hash table and count comparisons
+int search(struct HashTable* hashTable, int key, int* comparisons) {
+    int index = hashFunction(key, hashTable->size);
+    struct Node* temp = hashTable->table[index];
+
+    *comparisons = 0;  // Initialize count
+
+    while (temp) {
+        (*comparisons)++;  // Count each comparison
+        if (temp->key == key) {
+            return 1;  // Key found
+        }
+        temp = temp->next;
+    }
+    return 0;  // Key not found
+}
+
 // Function to print the hash table
 void printHashTable(struct HashTable* hashTable) {
     printf("\nHash Table (size = %d):\n", hashTable->size);
@@ -58,7 +75,7 @@ void printHashTable(struct HashTable* hashTable) {
 // Function to insert user-defined keys into the hash table
 void runExperiment(int tableSize, int numKeys) {
     struct HashTable* hashTable = createHashTable(tableSize);
-    int key;
+    int key, comparisons;
 
     printf("Enter %d numbers to insert:\n", numKeys);
     for (int i = 0; i < numKeys; i++) {
@@ -71,6 +88,25 @@ void runExperiment(int tableSize, int numKeys) {
 
     printHashTable(hashTable);
 
+    // Search for a key
+    printf("\nEnter a key to search: ");
+    scanf("%d", &key);
+    
+    if (search(hashTable, key, &comparisons)) {
+        printf("Key %d found in the hash table (Comparisons: %d).\n", key, comparisons);
+    } else {
+        printf("Key %d not found in the hash table (Comparisons: %d).\n", key, comparisons);
+    }
+
+    // Free allocated memory
+    for (int i = 0; i < tableSize; i++) {
+        struct Node* temp = hashTable->table[i];
+        while (temp) {
+            struct Node* toFree = temp;
+            temp = temp->next;
+            free(toFree);
+        }
+    }
     free(hashTable->table);
     free(hashTable);
 }
@@ -88,3 +124,4 @@ int main() {
 
     return 0;
 }
+    
