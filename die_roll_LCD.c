@@ -1,34 +1,33 @@
-#include <lpc17xx.h>
-#include <stdlib.h>
+#include<lpc17xx.h>
+#include<stdlib.h>
 
 void lcd_init(void);
-void write(int, int);
+void write(int,int);
 void delay_lcd(unsigned int);
-void lcd_comdata(int, int);
+void lcd_comdata(int,int);
+void lcd_putc(unsigned char);
 void clear_ports(void);
-void lcd_putc(unsigned char); 
+unsigned int  r;
 
-int main(void) {
-    SystemInit();
-    SystemCoreClockUpdate();
-    lcd_init();
-
-    LPC_GPIO2->FIODIR &= ~(1 << 10); // Set P2.10 (SW2) as input
-
-    while (1) {
-        if (!(LPC_GPIO2->FIOPIN & (1 << 10))) { // If SW2 is pressed
-            int random_number = (rand() % 6) + 1; // Generate number between 1-6
-
-            lcd_comdata(0x80, 0); // Move cursor to first position
-            lcd_putc(random_number + '0'); // Convert number to char and display
-
-            delay_lcd(100000); // Simple debounce delay
-            while (!(LPC_GPIO2->FIOPIN & (1 << 10))); // Wait until button is released
-        }
-    }
+int main(void){
+	SystemInit();
+	SystemCoreClockUpdate();
+	lcd_init();
+	
+	LPC_GPIO0->FIODIR &= ~(1<<21);
+	
+	while(1){
+		if(!(LPC_GPIO0->FIOPIN & (1<<21))){
+			int random_number =(rand()%6)+1;
+			
+			lcd_comdata(0x80,0);
+			lcd_putc(random_number+'0');
+			
+			delay_lcd(100000);
+			while(!(LPC_GPIO0->FIOPIN & (1<<21)));
+		}
+	}
 }
-
-// LCD Initialization
 void lcd_init() {
     LPC_PINCON->PINSEL1 &= 0xFC003FFF; // Configure P0.23 to P0.28 as GPIO
     LPC_GPIO0->FIODIR |= 0x0F << 23 | 1 << 27 | 1 << 28; // Set directions as output
@@ -67,7 +66,7 @@ void write(int temp2, int type) {
 
 // LCD Delay
 void delay_lcd(unsigned int r1) {
-    for (unsigned int r = 0; r < r1; r++);
+    for (r = 0; r < r1; r++);
 }
 
 // Clear LCD Ports
