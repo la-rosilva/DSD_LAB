@@ -183,3 +183,122 @@ int main(void)
         }
     } // end while 1
 } // end main
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Visalakshi's code
+#include<lpc17xx.h>
+#include "lcd_disp.c"
+void scan(void);
+unsigned char key, op, eq;
+unsigned char expression[10];
+unsigned int pos = 0;
+int a, b;
+unsigned long int row, var, flag, i, var1, temp, temp1, temp2, temp3;
+unsigned int num1, num2, res;
+unsigned char scan_code[16] = {0X11, 0X21, 0X41, 0X81, 0X12, 0X22, 0X42, 0X82, 0X14, 0X24, 0X44, 0X84, 0X18, 0X28, 0X48, 0X88};
+unsigned char ascii_code[16] = {'1', '2', '3', '+', '4', '5', '6', '-', '7', '8', '9', '=', '*', '0', '#', 'C'};
+int main(void)
+{
+	LPC_GPIO2 -> FIODIR |= 0x00003C00;
+	LPC_GPIO1 -> FIODIR &= 0xF87FFFFF;
+	LPC_GPIO0 -> FIODIR |= 0XF << 23 | 1 <<27 | 1 << 28;
+	clear_ports();
+	delay_lcd(3200);
+	lcd_init();
+	lcd_comdata(0x80, 0);
+	delay_lcd(800);
+	while(1){
+		while(1){
+			for(row = 1; row < 5; row++){
+				if(row == 1)
+					var1 = 0x00000400;
+				else if(row == 2)
+					var1 = 0x00000800;
+				else if(row == 3)
+					var1 = 0x00001000;
+				else if(row == 4)
+					var1 = 0x00002000;
+				temp = var1;
+				LPC_GPIO2 -> FIOCLR = 0x00003C00;
+				LPC_GPIO2 -> FIOSET = var1;
+				flag = 0;
+				scan();
+				if(flag == 1)
+					break;
+			}
+			if(flag == 1)
+				break;
+		}
+		for(i = 0; i<16; i++){
+			if(key == scan_code[i]){
+				if(ascii_code[i] == 'C'){
+					lcd_comdata(0x01, 0);
+					delay_lcd(100000);
+					pos = 0;
+					break;
+				}
+				expression[pos++] = ascii_code[i];
+				lcd_puts(expression[pos-1]);
+				delay_lcd(100000);
+				if(pos == 4){
+					if(expression[1] == '+'){
+						expression[4] = ((expression[0] - '0') + (expression[2] - '0')) + '0';
+						if(expression[4] - '0' > 9){
+							a = (expression[4] - '0')%10;
+							b = (expression[4] - '0')/10;
+							lcd_puts(b + '0');
+							delay_lcd(100000);
+							lcd_puts(a + '0');
+							delay_lcd(100000);
+						}
+						else{
+							lcd_puts(expression[4]);
+							delay_lcd(100000);
+						}
+					}
+					else if(expression[1] == '-'){
+						expression[4] = ((expression[0] - '0') - (expression[2] - '0')) + '0';
+						lcd_puts(expression[4]);
+						delay_lcd(100000);
+					}
+				}
+				break;
+			}
+		}
+	}
+}
+void scan(void)
+{
+	temp3 = LPC_GPIO1 -> FIOPIN;
+	temp3 &= 0x07800000;
+	if(temp3 != 0x00000000){
+		flag = 1;
+		temp3 >>= 19;
+		temp >>= 10;
+		key = temp3 | temp;
+	}
+}
