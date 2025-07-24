@@ -1,0 +1,66 @@
+Development Phases (Left Side):
+
+    Requirements Analysis
+
+        Gather and analyze user and system requirements.
+
+        Define what the system should do, its constraints, and overall goals.
+
+        Output: Requirements Specification Document.
+
+    System Design
+
+        Translate requirements into a system architecture.
+
+        Define system components, modules, interfaces, and data flow.
+
+        Output: System Design Document.
+
+    Architectural Design (High-Level Design)
+
+        Break down the system into smaller subsystems or modules.
+
+        Define relationships between modules and how they interact.
+
+        Output: High-Level Design Document.
+
+    Module Design (Low-Level Design)
+
+        Design the internal logic of each module.
+
+        Specify algorithms, data structures, and detailed module specifications.
+
+        Output: Low-Level Design Document.
+
+    Coding / Implementation
+
+        Write the actual code based on module designs.
+
+        Implement modules as per specifications.
+
+Testing Phases (Right Side):
+
+    Unit Testing
+
+        Test individual modules for correctness.
+
+        Verify that each module performs as expected in isolation.
+
+    Integration Testing
+
+        Test combined modules and their interactions.
+
+        Verify interfaces and data flow between modules.
+
+    System Testing
+
+        Test the complete integrated system.
+
+        Validate the system’s compliance with specified requirements.
+
+    Acceptance Testing
+
+        Conducted by the end user or client.
+
+        Validate the system in the real-world environment against user needs and requirements.
+
