@@ -1,0 +1,41 @@
+1)What is a Database?
+A database is a place where data (information) is stored and organized so it can be easily accessed, managed, and updated.
+
+2) What is databse management system?
+A Database Management System (DBMS) is software that acts as an interface between users (or applications) and a database, helping to store, retrieve, and manage data efficiently and securely.
+
+3) Advantages of DMBS
+    Data Integrity: Ensures that the data is accurate and consistent. (using constraints like primary key, unique key, check)
+    Data Security: Provides controlled access to sensitive data by setting permissions for different users.
+    Efficient Data Retrieval: Optimizes queries and indexing, allowing faster data retrieval.
+    Reduced Redundancy: Avoids duplicate data by enforcing normalization.
+    Backup and Recovery: Offers automatic backup and recovery mechanisms.
+    Concurrent Access: Allows multiple users to access the database at the same time without conflicts.
+
+
+4)Difference between DBMS and RDBMS
+What is a DBMS (Database Management System)?
+
+    It’s a software system that helps you store, manage, and organize data.
+
+    Data can be stored in any format — not necessarily tables.
+
+    Think of it like a big digital file cabinet where you can save, change, or delete information.
+
+    Examples: Microsoft Access, XML databases.
+
+    Data is stored in files, but it may not be organized strictly in tables with rows and columns.
+
+What is an RDBMS (Relational Database Management System)?
+
+    It’s a special kind of DBMS that organizes data into tables — like spreadsheets with rows and columns.
+
+    Each row is a record (like one customer’s info), and each column is a data field (like name, phone number).
+
+    It supports relationships between tables, so you can link related data (e.g., customers and orders).
+
+    It uses keys (like primary keys and foreign keys) to keep data accurate and consistent.
+
+    You use SQL (Structured Query Language) to ask questions and manipulate data.
+
+    Examples: MySQL, Oracle, SQL Server.
