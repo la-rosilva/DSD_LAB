@@ -1,0 +1,311 @@
+. What is the main function of a router?
+
+The main function of a router is to connect multiple networks and direct data packets between them. Routers operate at the network layer (Layer 3) of the OSI model and use IP addresses to determine the best path for forwarding the packets toward their destination. When a data packet arrives, the router examines its destination IP address, consults its routing table, and then forwards the packet to the appropriate next-hop device or network segment. Routers also help manage traffic within a network by segmenting it into smaller, manageable parts (subnets), enhancing overall network efficiency, security, and performance.
+
+Key roles of a router:
+
+    Connects different networks (e.g., LAN to WAN).
+
+    Routes data packets between networks based on IP addresses.
+
+    Determines the best path for data transmission.
+
+    Manages traffic to reduce congestion and improve speed.
+
+    Supports security features like firewalls and access control lists (ACLs).
+
+2. What operations can be performed on any file using FTP server?
+
+The File Transfer Protocol (FTP) server enables several operations on files, facilitating the transfer and management of files between clients and the server over the network. The primary operations include:
+
+    Upload: Transfer files from the client machine to the FTP server.
+
+    Download: Transfer files from the FTP server to the client machine.
+
+    Delete: Remove files from the FTP server.
+
+    Rename: Change the name of files stored on the FTP server.
+
+    Create directories: Make new folders/directories on the FTP server to organize files.
+
+    List directories: View files and directories stored on the FTP server.
+
+    Move: Move files within the server’s directory structure (depending on the FTP client/server capabilities).
+
+These operations make FTP useful for sharing, backing up, and managing files remotely over a network.
+3. Why do we use static addressing for all servers? Provide a detailed, in-depth explanation.
+
+Static IP addressing means assigning a fixed IP address to a device manually, as opposed to dynamic addressing where IPs are assigned automatically by DHCP. For servers (such as HTTP, FTP, and DNS servers), static IP addressing is crucial because:
+
+    Consistency and Reliability: Servers provide critical services that clients must reliably access. A static IP ensures the server’s address never changes, so clients and other network devices can consistently find and communicate with the server without interruptions.
+
+    DNS Mapping: DNS servers map domain names to IP addresses. If a server’s IP address changed dynamically, DNS entries would quickly become outdated, causing failures in resolving domain names to the correct server address. Static IPs ensure DNS records remain accurate and reliable.
+
+    Network Configuration: Many network settings and security policies (like firewall rules, access control lists, and port forwarding) depend on knowing the exact IP addresses of servers. Static IPs simplify these configurations and avoid frequent updates that would be necessary if IPs changed.
+
+    Service Availability: For services like web hosting, file sharing, or email, clients expect to connect to the same IP every time. Static IPs prevent connection failures due to IP address changes, thus improving service availability and uptime.
+
+    Troubleshooting and Monitoring: Static IPs make network management easier by allowing administrators to quickly identify and troubleshoot servers without ambiguity. Dynamic IPs could complicate tracking and monitoring of network issues.
+
+In summary, static addressing for servers ensures stable, predictable, and uninterrupted communication within the network, which is essential for the smooth operation of network services.
+
+
+
+
+
+xperiment Procedure Explained: Step-by-Step with Services
+Q1. Network Design:
+a) HTTP Server
+
+    Why: This server hosts web pages accessible over the network. It uses the HTTP (Hypertext Transfer Protocol) or HTTPS protocols to deliver web content to clients (like browsers on PCs).
+
+    Purpose: When a client requests a webpage, the HTTP server responds with the webpage data (HTML, CSS, images, etc.).
+
+b) FTP Server
+
+    Why: The FTP server manages file transfers between clients and the server. It uses the FTP (File Transfer Protocol) to allow uploading, downloading, deleting, and managing files remotely.
+
+    Purpose: Enables users to securely exchange files across the network.
+
+c) DNS Server
+
+    Why: The DNS server translates human-readable domain names (like www.example.com) into IP addresses so clients can locate servers on the network.
+
+    Purpose: Resolves domain names to IPs, enabling easier navigation and communication.
+
+d) Switch
+
+    Why: A switch connects multiple devices within the same local network, forwarding data packets only to the intended recipient device based on MAC addresses.
+
+    Purpose: Provides efficient, high-speed connectivity inside the LAN.
+
+e) Router
+
+    Why: The router connects multiple networks (e.g., LAN and WAN) and routes packets between them based on IP addresses.
+
+    Purpose: Enables communication between different network segments or the internet.
+
+f) PC
+
+    Why: Acts as a client device for testing communication with servers (HTTP, FTP, DNS).
+
+    Purpose: Sends requests and receives responses to/from servers, simulating real user activity.
+
+2. Configure the IP address of PC-PT
+
+    Why: Assigning an IP address allows the PC to communicate on the network. The IP address must be within the same subnet as the servers/router interfaces to ensure connectivity.
+
+    Purpose: Establishes the PC’s unique identity on the network, enabling it to send and receive packets properly.
+
+3. Configure the Router
+a) Click on the router → CLI (Command Line Interface)
+
+    Why: Router configuration is done via CLI to set up network interfaces, routing protocols, IP addresses, and other parameters.
+
+    Purpose: Allows detailed configuration to control how the router processes and forwards packets.
+
+b) Configure interfaces with IP addresses (First and Second Interfaces)
+
+    Why: Each router interface connects to a different network segment and must have a unique IP address for routing.
+
+    Purpose: Enables the router to route traffic between connected networks (e.g., from the PC’s subnet to the server subnet).
+
+4. Configure the HTTP Server
+a) Set a static IP address
+
+    Why: The HTTP server needs a fixed IP so clients can reliably connect to it via IP or DNS name without IP changes causing failures.
+
+    Purpose: Ensures persistent access to the web service hosted on the server.
+
+b) Stop other services on the HTTP server
+
+    Why: To avoid conflicts and ensure only HTTP services run on this server, which simplifies troubleshooting and maintains performance.
+
+    Purpose: Isolates the server’s function to HTTP only.
+
+5. Configure the DNS Server
+a) Set static IP address
+
+    Why: DNS must have a fixed IP for clients to know where to send domain name queries.
+
+    Purpose: Ensures DNS service availability and reliability.
+
+b) Stop other unnecessary servers
+
+    Why: Keeps DNS server dedicated to DNS tasks, avoids resource conflicts.
+
+    Purpose: Improves stability and performance.
+
+c) Enable DNS service, add hostname and IP mappings
+
+    Why: Add entries mapping domain names (like a website’s URL) to IP addresses of the HTTP server.
+
+    Purpose: Allows clients to resolve domain names to the correct server IP.
+
+6. Configure the FTP Server
+a) Assign static IP address
+
+    Why: Clients need a consistent address to connect to the FTP server reliably.
+
+    Purpose: Stable address for FTP service access.
+
+b) Stop other services
+
+    Why: Avoid interference with FTP operations.
+
+    Purpose: Dedicated FTP service functionality.
+
+c) Enable FTP service, add username/password
+
+    Why: Authentication is required for secure access to FTP server resources.
+
+    Purpose: Controls access and protects files from unauthorized use.
+
+d) Configure file operations and add files
+
+    Why: Allows users to upload/download files and manage files remotely.
+
+    Purpose: Implements core FTP functionality for file sharing.
+
+7. & 8. Access PC Desktop and Command Prompt
+
+    Why: The command prompt allows manual testing of protocols like FTP, HTTP (via tools like curl or browsers), and DNS resolution commands (like nslookup).
+
+    Purpose: Enables verification that network services are working as expected.
+
+9. FTP Command to Connect to FTP Server
+
+    ftp 192.169.2.4
+
+    Why: This command initiates an FTP session to the FTP server using its IP.
+
+    Purpose: Tests FTP connectivity and functionality from the client PC.
+
+10. Enter Username and Password
+
+    Why: Authenticate with the FTP server for secure access.
+
+    Purpose: Ensures only authorized users can transfer or modify files.
+
+Summary of Services
+Service	Protocol	Purpose	Typical Port
+HTTP	HTTP/HTTPS	Deliver web pages to clients	80 / 443
+FTP	FTP	File transfer and management	21
+DNS	DNS	Domain name to IP address resolution	53
+
+If you want, I can also help prepare screenshots or example commands you can use in GNS3, Cisco Packet Tracer, or Wireshark to show how these services work in practice! Would you like that?
+
+
+How to Test Each Connection in Your Network Lab
+1. Test PC to Router Connectivity
+
+Purpose: Confirm that your PC can communicate with the router.
+
+Steps:
+
+    On your PC:
+
+        Go to Desktop > Command Prompt.
+
+        Type:
+
+ping <Router_Interface_IP>
+
+Example:
+
+        ping 192.169.2.1
+
+        Press Enter.
+
+Expected Result:
+You should see replies, meaning PC and router are connected.
+2. Test PC to HTTP Server
+
+Purpose: Verify that the PC can reach the HTTP server by IP and get a webpage.
+
+Steps:
+
+    Ping the HTTP Server IP from PC:
+
+        In Command Prompt:
+
+    ping 192.169.2.2
+
+    Press Enter.
+
+Access HTTP Server via Browser:
+
+    Go to Desktop > Web Browser on PC.
+
+    Enter the HTTP server IP:
+
+        http://192.169.2.2
+
+        Press Enter.
+
+Expected Result:
+You should see the webpage hosted on the HTTP server.
+3. Test PC to FTP Server
+
+Purpose: Test file transfer connection from PC to FTP server.
+
+Steps:
+
+    On PC Command Prompt, type:
+
+ftp 192.169.2.4
+
+(Replace 192.169.2.4 with your FTP server IP.)
+
+When prompted, enter the username and password you configured on the FTP server.
+
+After login, test commands like:
+
+ls
+
+(to list files) or
+
+    get filename
+
+    (to download a file).
+
+Expected Result:
+You should successfully connect and interact with files on the FTP server.
+4. Test DNS Resolution on PC
+
+Purpose: Check if the PC can translate domain names (like your website name) into IP addresses using the DNS server.
+
+Setup DNS on PC:
+
+    On PC, go to Desktop > IP Configuration.
+
+    Set the DNS Server IP to your DNS server’s static IP (example: 192.169.2.3).
+
+Test DNS:
+
+    On PC Command Prompt, type:
+
+nslookup <website-name>
+
+Example:
+
+    nslookup mywebsite.com
+
+    (The website name is the one you added in the DNS server configuration pointing to the HTTP server IP.)
+
+Expected Result:
+You should see the DNS server respond with the IP address of the HTTP server.
+5. Test HTTP Server Using Domain Name (via DNS)
+
+Purpose: Access the HTTP server using the domain name resolved by DNS.
+
+Steps:
+
+    On PC’s web browser, type:
+
+    http://mywebsite.com
+
+    (Replace mywebsite.com with the domain name configured in your DNS server.)
+
+Expected Result:
+The browser loads the webpage hosted on the HTTP server, confirming that DNS resolution and HTTP communication are working.
